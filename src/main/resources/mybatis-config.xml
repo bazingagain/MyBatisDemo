@@ -5,7 +5,11 @@
 <configuration>
     <typeAliases>
         <typeAlias type="com.bazingagain.firstdemo.object.Role" alias="role"/>
+        <typeAlias type="com.bazingagain.firstdemo.object.User" alias="user"/>
     </typeAliases>
+    <typeHandlers>
+        <typeHandler handler="org.apache.ibatis.type.EnumOrdinalTypeHandler" javaType="com.bazingagain.firstdemo.enums.Gender"/>
+    </typeHandlers>
     <environments default="development">
         <environment id="development">
             <transactionManager type="JDBC">
@@ -21,5 +25,6 @@
     </environments>
     <mappers>
         <mapper resource="RoleMapper.xml"/>
+        <mapper resource="userMapper.xml"/>
     </mappers>
 </configuration>
