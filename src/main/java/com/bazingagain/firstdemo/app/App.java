@@ -6,10 +6,12 @@ import com.bazingagain.firstdemo.mapper.UserMapper;
 import com.bazingagain.firstdemo.object.Role;
 import com.bazingagain.firstdemo.object.User;
 import com.bazingagain.firstdemo.utils.SqlSessionFactoryUtil;
+import org.apache.ibatis.session.RowBounds;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.log4j.Logger;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * Created on 13/09/2017.
@@ -18,9 +20,9 @@ import java.util.Date;
  */
 public class App {
     private static Logger logger = Logger.getLogger(App.class);
-
+    private static int i = 0;
     public static void main(String[] args) {
-        testUser();
+        testPaging();
     }
 
     public static void testRole() {
@@ -28,13 +30,37 @@ public class App {
         try {
             sqlSession = SqlSessionFactoryUtil.openSqlSession();
             RoleMapper roleMapper = sqlSession.getMapper(RoleMapper.class);
-            Role role = new Role();
-            role.setRoleName("teacher");
-            role.setNote("a note");
-            roleMapper.insertRole(role);
-            roleMapper.getRole(1L);
-            roleMapper.deleteRole(1L);
+            for (int j = 0; j < 10; j++) {
+                Role role = new Role();
+                role.setRoleName("teacher" + (i++));
+                role.setNote("a note");
+                roleMapper.insertRole(role);
+            }
+//            roleMapper.getRole(1L);
+//            roleMapper.deleteRole(1L);
             sqlSession.commit();
+        } catch (Exception e) {
+            logger.error("execute error", e);
+            if (sqlSession != null) {
+                sqlSession.rollback();
+            }
+        } finally {
+            if (sqlSession != null) {
+                sqlSession.close();
+            }
+        }
+    }
+
+    public static void testPaging() {  //分页测试
+        SqlSession sqlSession = null;
+        try {
+            sqlSession = SqlSessionFactoryUtil.openSqlSession();
+            RoleMapper roleMapper = sqlSession.getMapper(RoleMapper.class);
+            List<Role> list = roleMapper.findRolesByName("teacher", new RowBounds(0, 5));
+            sqlSession.commit();
+            for (Role role : list) {
+                System.out.println(role.getId() + " " + role.getRoleName() + " " + role.getNote());
+            }
         } catch (Exception e) {
             logger.error("execute error", e);
             if (sqlSession != null) {

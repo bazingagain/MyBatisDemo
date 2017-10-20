@@ -1,6 +1,5 @@
 package com.bazingagain.firstdemo.enums;
 
-import com.sun.tools.javac.jvm.Gen;
 
 /**
  * Created on 14/09/2017.
